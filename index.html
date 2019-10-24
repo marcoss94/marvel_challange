@@ -1,82 +1,73 @@
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
-      <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet">
-      <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-    </head>
-    <body>
-      <div id="app">
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+
+<body>
+    <div id="app">
         <v-app>
-          <v-content>
-            <v-container>
-              <template>
-                <v-container class="grey lighten-5">
-                  <v-row no-gutters>
-                    <v-col sm-6 class="pa-2">
-                      <v-card>
-                        <v-card-text>
-                          <v-input>
-          Name: {{heroName}}
-        </v-input>
-                           <v-input>
-          Description: {{heroDesc}}
-        </v-input>
-        <v-input>
-          # Comics: {{heroComicsCount}}
-        </v-input>   
-                      </v-card-text>
-                        <v-card-title>
-                          <v-text-field
-                label="Super Hero's ID" 
-                v-model="heroId"
-                min="0"
-              ></v-text-field>
-                          <v-btn small color="primary" class="ml-3" @click="getHero">Search</v-btn>
-                        </v-card-title>
-                       </v-card>
-                       <v-alert type="error" v-show="errorStatus">
-          {{errorMessage}}
-        </v-alert>
-            </v-col>
-
-                    
-                  </v-row>
+            <v-content>
+                <v-container>
+                    <template>
+                        <v-container class="grey lighten-5">
+                            <v-row no-gutters>
+                                <v-col sm-6 class="pa-2">
+                                    <v-card>
+                                        <v-card-text>
+                                            <v-input>
+                                                <h3 class="font-weight-black">Name: </h3>
+                                            </v-input>
+                                            <v-input>
+                                                {{heroName}}
+                                            </v-input>
+                                            <v-input>
+                                                <h3 class="font-weight-black">Description: </h3>
+                                            </v-input>
+                                            <v-input>
+                                                {{heroDesc}}
+                                            </v-input>
+                                            <v-input>
+                                                <h3 class="font-weight-black"># Comics: </h3>
+                                            </v-input>
+                                            <v-input>
+                                                {{heroComicsCount}}
+                                            </v-input>
+                                        </v-card-text>
+                                        <v-card-title>
+                                            <v-text-field label="Super Hero's ID" v-model="heroId" min="0"></v-text-field>
+                                            <v-btn small color="primary" class="ml-3" @click="getHero" >Search</v-btn>
+                                        </v-card-title>
+                                    </v-card>
+                                    <v-alert type="error" v-show="errorStatus">
+                                        {{errorMessage}}
+                                    </v-alert>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </template>
                 </v-container>
-              </template>
-    		</v-container>
-          </v-content>
+            </v-content>
         </v-app>
-      </div>
-
-      <script type="text/javascript" src="./js/vue.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    </div>
+    <script type="text/javascript" src="./js/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
     <script type="text/javascript" src="./js/axios.min.js"></script>
+    <script type="text/javascript" src="./js/md5.min.js"></script>
+    <script type="text/javascript" src="config.js"></script>
+   
+    <script>
+    var encript = md5(Time_Stamp + Private_Key + Public_Key);
 
+    new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data: {
 
-
-
-<script type="text/javascript" src="./js/md5.min.js"></script>
-<script type="text/javascript" src="config.js"></script>
-
-      
-
-
-
-       
-            
-
-      <script>
-
-        var encript = md5(Time_Stamp+Private_Key+Public_Key);
-
-        
-        new Vue({
-          el: '#app',
-          vuetify: new Vuetify(),
-          data: {   
-            
             errorMessage: '',
             errorStatus: false,
             heroId: '',
@@ -89,88 +80,57 @@
             MarvelEntryPoint: Marvel_URL,
             MarvelEndPoint: 'v1/public/characters/',
 
-          },
+        },
 
 
 
-          methods: {
+        methods: {
+            getHero: function() {
+                this.clear();
+                var $this = this;
+                var reg = /^\d+$/;
 
+                if (!reg.test(this.heroId) || this.heroId == "") {
+                    this.errorStatus = true;
+                    this.errorMessage = "Super Hero's ID must be a numerical value";
 
-            getHero: function(){
-                  this.clear();
-             
+                    this.heroId = '';
+                    return;
+                }
 
+                $this.errorStatus = false;
 
+                axios.get($this.MarvelEntryPoint + $this.MarvelEndPoint + $this.heroId + "?apikey=" + $this.apikey + "&ts=" + $this.ts + "&hash=" + $this.hash)
 
-              var $this = this; 
-              var reg = /^\d+$/;
+                    .then(function(response) {
+                        $this.heroName = response.data.data.results[0].name;
+                        $this.heroDesc = response.data.data.results[0].description;
+                        $this.heroComicsCount = response.data.data.results[0].comics.available;
+                    })
+                    .catch(function(error) {
 
-               if(!reg.test(this.heroId) || this.heroId==""){
-                this.errorStatus = true;
-                this.errorMessage = "Super Hero's ID must be a numerical value";
-                
-                this.heroId = '';
-                return;
-              }
+                        $this.errorMessage = (error.response.status == 404) ?
+                            error.response.data.status :
+                            error.response.data.message;
+                        $this.errorStatus = true;
 
+                    })
+                    .finally(function(response, error) {
+                        if ($this.heroName == '' && !$this.errorStatus) {
+                            $this.errorStatus = true;
+                            $this.errorMessage = "Unable to connect to Marvel server"
 
-$this.errorStatus = false;
-               
+                        }
 
-
-    axios.get($this.MarvelEntryPoint+$this.MarvelEndPoint+$this.heroId+"?apikey="+$this.apikey+"&ts="+$this.ts+"&hash="+$this.hash)
-
-      .then(function (response) {
-        $this.heroName=response.data.data.results[0].name;
-        $this.heroDesc=response.data.data.results[0].description;
-        $this.heroComicsCount=response.data.data.results[0].comics.available;
-
-alert("ok");
-
-     console.log(response);
-    })
-    .catch(function (error) {
-      
-      $this.errorMessage=(error.response.status == 404)
-      ?error.response.data.status
-      :error.response.data.message;
-      $this.errorStatus = true;
-      
-      alert("error");
-     console.log(error);
-     
-    })
-   .finally(function (response, error) {
-    alert("final");
-    if($this.heroName =='' && !$this.errorStatus){
-      alert("entro al if");
-      
-      $this.errorStatus = true;
-      $this.errorMessage = "Unable to connect to Marvel server"
-
-    }
-
-  });
-
-
-
-             
-
-
+                    });
             },
-clear: function(){            
-        this.heroName = '';
-      this.heroDesc = '';
-        this.heroComicsCount = '';
-         this.errorMessage = '';
-
+            clear: function() {
+                this.heroName = '';
+                this.heroDesc = '';
+                this.heroComicsCount = '';
+                this.errorMessage = '';
             }
-            }
-        })
-
-      </script>
-
-
-
-
-    </body>
+        }
+    })
+    </script>
+</body>
