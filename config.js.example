@@ -1,0 +1,4 @@
+const Public_Key = "your public key";
+const Private_Key = "your private key";
+const Time_Stamp = "your time stamp";
+const Marvel_URL = "https://gateway.marvel.com/";
